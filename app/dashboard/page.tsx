@@ -46,7 +46,7 @@ export default async function DashboardPage() {
   const offers = await getData(session.user.email)
 
   return (
-    <div className="bg-gray-50 pt-16">
+    <div className="bg-background pt-16">
       {/* Pulsante fisso per pubblicare annuncio */}
       <div className="fixed top-20 right-4 z-40">
         <Button asChild className="shadow-lg">
@@ -55,6 +55,18 @@ export default async function DashboardPage() {
       </div>
       
       <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Sezione di benvenuto */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Benvenuto nella tua Dashboard
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-3xl">
+            In questa sezione puoi gestire tutti i tuoi annunci di lavoro. 
+            Pubblica nuove offerte, modifica quelle esistenti o elimina quelle non più attive. 
+            Qui vedrai anche tutte le candidature ricevute per ogni posizione.
+          </p>
+        </div>
+
         {offers.length === 0 ? (
           <Card>
             <CardContent className="pt-6">
