@@ -1,10 +1,9 @@
-import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
-import { prisma } from "../../lib/prisma"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card"
-import { Badge } from "../../components/ui/badge"
-import { Button } from "../../components/ui/button"
-import { JobOfferActions } from "../../components/job-offer-actions"
+import { getServerSession } from "next-auth"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { JobOfferActions } from "@/components/job-offer-actions"
+import { prisma } from "@/lib/prisma"
 import { JobOffer, Application } from "@prisma/client"
 
 type JobOfferWithApplications = JobOffer & {
@@ -14,21 +13,32 @@ type JobOfferWithApplications = JobOffer & {
 
 async function getData(email: string): Promise<JobOfferWithApplications[]> {
   const offers = await prisma.jobOffer.findMany({
-    where: { createdByEmail: { equals: email } },
-    orderBy: { createdAt: "desc" },
+    where: {
+      createdByEmail: email,
+    },
     include: {
-      _count: { select: { applications: true } },
+      _count: {
+        select: {
+          applications: true,
+        },
+      },
       applications: {
-        orderBy: { createdAt: "desc" },
-        take: 10,
+        orderBy: {
+          createdAt: "desc",
+        },
       },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   })
+
   return offers
 }
 
 export default async function DashboardPage() {
   const session = await getServerSession()
+
   if (!session?.user?.email) {
     redirect("/api/auth/signin")
   }
@@ -36,86 +46,106 @@ export default async function DashboardPage() {
   const offers = await getData(session.user.email)
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-bemyrider-blue">Dashboard esercente</h1>
-          <p className="text-sm text-muted-foreground">Gestisci i tuoi annunci e visualizza le candidature</p>
-        </div>
-        <a href="/publish">
-          <Button className="bg-bemyrider-orange hover:bg-bemyrider-orange/90">Pubblica nuovo annuncio</Button>
-        </a>
+    <div className="bg-gray-50 pt-16">
+      {/* Pulsante fisso per pubblicare annuncio */}
+      <div className="fixed top-20 right-4 z-40">
+        <Button asChild className="shadow-lg">
+          <a href="/publish">Pubblica Annuncio</a>
+        </Button>
       </div>
-
-      {offers.length === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Nessun annuncio pubblicato</CardTitle>
-            <CardDescription>Pubblica il tuo primo annuncio per iniziare a ricevere candidature.</CardDescription>
-          </CardHeader>
-        </Card>
-      ) : (
-        <div className="space-y-6">
-          {offers.map((offer) => (
-            <Card key={offer.id} className="border">
-              <CardHeader className="space-y-2">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">{offer.businessName}</CardTitle>
-                    <CardDescription>
-                      {offer.city} {offer.zone ? `- ${offer.zone}` : ""} • {offer.schedule}
-                    </CardDescription>
+      
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {offers.length === 0 ? (
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center py-8">
+                <p className="text-muted-foreground mb-4">
+                  Non hai ancora pubblicato nessun annuncio.
+                </p>
+                <Button asChild>
+                  <a href="/publish">Pubblica il tuo primo annuncio</a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4 md:space-y-6">
+            {offers.map((offer) => (
+              <Card key={offer.id}>
+                <CardHeader>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                      <CardTitle className="text-lg">{offer.businessName}</CardTitle>
+                      <CardDescription>
+                        {offer.city} {offer.zone ? `- ${offer.zone}` : ""} • {offer.schedule}
+                      </CardDescription>
+                    </div>
+                    <JobOfferActions offer={offer} />
                   </div>
-                  <JobOfferActions offer={offer} />
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {(Array.isArray(offer.vehicleType) ? offer.vehicleType : [offer.vehicleType]).map((v, i) => (
-                    <Badge key={`${offer.id}-veh-${i}`} variant="secondary">{v}</Badge>
-                  ))}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Candidature totali: {offer._count?.applications ?? 0}
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-3">
-                <h3 className="font-medium">Candidature recenti</h3>
-                {offer.applications.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Ancora nessuna candidatura.</p>
-                ) : (
-                  <div className="space-y-3">
-                    {offer.applications.map((app: Application) => (
-                      <div key={app.id} className="rounded-md border p-3">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div>
-                            <div className="font-medium">{app.fullName}</div>
-                            <div className="text-xs text-muted-foreground">{app.email} • {app.phone}</div>
-                          </div>
-                          <Badge variant="outline">{app.vehicleType}</Badge>
-                        </div>
-                        <div className="mt-2 text-sm">
-                          <div><span className="text-muted-foreground">Disponibilità:</span> {app.availability}</div>
-                          {app.cvLink ? (
-                            <div className="truncate">
-                              <span className="text-muted-foreground">CV:</span>{" "}
-                              <a className="text-primary underline" href={app.cvLink} target="_blank" rel="noreferrer">
-                                {app.cvLink}
-                              </a>
-                            </div>
-                          ) : null}
-                          {app.message ? (
-                            <div className="mt-2 text-muted-foreground whitespace-pre-wrap">{app.message}</div>
-                          ) : null}
-                        </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-2">Dettagli</h4>
+                      <p className="text-sm text-muted-foreground">{offer.details}</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="font-medium mb-2">Orari di Lavoro</h4>
+                        <p className="text-sm text-muted-foreground">{offer.schedule}</p>
                       </div>
-                    ))}
+                      <div>
+                        <h4 className="font-medium mb-2">Giorni</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {offer.days && offer.days.length > 0 
+                            ? offer.days.join(", ") 
+                            : "Non specificato"
+                          }
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium mb-2">
+                        Candidature ({offer._count.applications})
+                      </h4>
+                      {offer.applications.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">
+                          Nessuna candidatura ancora.
+                        </p>
+                      ) : (
+                        <div className="space-y-3">
+                          {offer.applications.map((app) => (
+                            <div key={app.id} className="p-3 bg-gray-50 rounded-md">
+                              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                                <div>
+                                  <p className="font-medium">{app.fullName}</p>
+                                  <p className="text-sm text-muted-foreground">{app.email}</p>
+                                  <p className="text-sm text-muted-foreground">{app.phone}</p>
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {new Date(app.createdAt).toLocaleDateString("it-IT")}
+                                </div>
+                              </div>
+                              {app.message && app.message.trim() ? (
+                                <div className="mt-3 p-3 bg-gray-50 rounded-md">
+                                  <div className="text-xs font-medium text-muted-foreground mb-1">Messaggio del candidato:</div>
+                                  <div className="text-sm text-gray-700 whitespace-pre-wrap">{app.message}</div>
+                                </div>
+                              ) : null}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

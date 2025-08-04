@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,8 +11,12 @@
   
   body {
     font-family: Inter, sans-serif;
-    background-color: #ffffff;
+    background-color: #f8fafc; /* Grigio chiaro per sfondo più moderno */
     color: #1f2937;
+  }
+  
+  .font-manrope {
+    font-family: 'Manrope', sans-serif;
   }
 }
 
@@ -19,7 +24,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 98%; /* #f8fafc - grigio chiaro */
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;

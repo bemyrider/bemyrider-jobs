@@ -198,8 +198,8 @@ export function JobOffersList() {
 
       {/* Header con ricerca e filtri */}
       <div className="flex flex-col space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight text-bemyrider-blue">Trova il tuo prossimo lavoro</h1>
-        <p className="text-muted-foreground">Esplora le opportunità di lavoro disponibili nella tua zona</p>
+        <h1 className="text-4xl font-bold tracking-tight text-bemyrider-blue">Trova il tuo prossimo ingaggio</h1>
+        <p className="text-muted-foreground">Esplora le opportunità di ingaggio disponibili nella tua zona</p>
         
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1 max-w-sm">

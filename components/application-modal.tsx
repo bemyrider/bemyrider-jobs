@@ -64,7 +64,7 @@ export function ApplicationModal({ jobOffer, isOpen, onClose }: ApplicationModal
       } else {
         alert("Errore nell'invio della candidatura")
       }
-    } catch (error) {
+    } catch {
       alert("Errore di connessione")
     } finally {
       setLoading(false)

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         vehicleType: body.vehicleType,
         availability: body.availability,
         cvLink: body.cvLink,
-        message: body.message,
+        message: body.message || body.presentation, // Usa message se presente, altrimenti presentation
       },
       include: {
         jobOffer: true

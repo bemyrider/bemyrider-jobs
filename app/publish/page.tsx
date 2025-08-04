@@ -1,13 +1,21 @@
-import { CreateJobOfferForm } from "../../components/create-job-offer-form"
+import { redirect } from "next/navigation"
+import { getServerSession } from "next-auth"
+import { CreateJobOfferForm } from "@/components/create-job-offer-form"
 
-export default function PublishPage() {
+export default async function PublishPage() {
+  const session = await getServerSession()
+
+  if (!session?.user?.email) {
+    redirect("/api/auth/signin")
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4">Pubblica un Annuncio</h1>
-          <p className="text-lg text-gray-600">
-            Trova il rider perfetto per la tua attività
+    <div className="bg-gray-50 pt-16">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Pubblica Annuncio</h1>
+          <p className="text-gray-600">
+            Crea un nuovo annuncio di lavoro per trovare il rider perfetto per la tua attività.
           </p>
         </div>
         

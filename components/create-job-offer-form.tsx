@@ -16,7 +16,7 @@ interface CreateJobOfferFormProps {
   offerId?: string
 }
 
-export function CreateJobOfferForm({ onSuccess, initialData, isEditing = false, offerId }: CreateJobOfferFormProps) {
+export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: CreateJobOfferFormProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const [formData, setFormData] = useState({
@@ -92,13 +92,13 @@ export function CreateJobOfferForm({ onSuccess, initialData, isEditing = false, 
           // Reindirizza alla dashboard dopo la creazione di un nuovo annuncio
           router.push('/dashboard')
         } else {
-          // Per la modifica, chiama onSuccess se fornito
-          onSuccess?.()
+          // Reindirizza alla dashboard anche dopo l'aggiornamento
+          router.push('/dashboard')
         }
       } else {
         alert(isEditing ? "Errore nell'aggiornamento dell'annuncio" : "Errore nella creazione dell'annuncio")
       }
-    } catch (error) {
+    } catch {
       alert("Errore di connessione")
     } finally {
       setLoading(false)

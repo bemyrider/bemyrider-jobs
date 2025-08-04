@@ -57,7 +57,7 @@ export function ApplicationForm({ jobOfferId, onSuccess, onCancel }: Application
       } else {
         alert("Errore nell'invio della candidatura")
       }
-    } catch (error) {
+    } catch {
       alert("Errore di connessione")
     } finally {
       setLoading(false)

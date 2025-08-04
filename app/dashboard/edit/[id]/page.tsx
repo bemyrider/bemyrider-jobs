@@ -1,50 +1,43 @@
-import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
-import { prisma } from "../../../../lib/prisma"
-import { notFound } from "next/navigation"
-import { CreateJobOfferForm } from "../../../../components/create-job-offer-form"
+import { getServerSession } from "next-auth"
+import { prisma } from "@/lib/prisma"
+import { CreateJobOfferForm } from "@/components/create-job-offer-form"
 
-async function getJobOffer(id: string, userEmail: string) {
-  const offer = await prisma.jobOffer.findFirst({
-    where: {
-      id,
-      createdByEmail: userEmail,
-    },
-  })
-  return offer
+interface EditPageProps {
+  params: Promise<{ id: string }>
 }
 
-export default async function EditJobOfferPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+export default async function EditPage({ params }: EditPageProps) {
   const session = await getServerSession()
+
   if (!session?.user?.email) {
     redirect("/api/auth/signin")
   }
 
   const { id } = await params
-  const offer = await getJobOffer(id, session.user.email)
+  
+  const offer = await prisma.jobOffer.findUnique({
+    where: {
+      id,
+      createdByEmail: session.user.email,
+    },
+  })
+
   if (!offer) {
-    notFound()
+    redirect("/dashboard")
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4">Modifica Annuncio</h1>
-          <p className="text-lg text-gray-600">
-            Modifica i dettagli del tuo annuncio
+    <div className="bg-gray-50 pt-16">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Modifica Annuncio</h1>
+          <p className="text-gray-600">
+            Modifica i dettagli del tuo annuncio di lavoro.
           </p>
         </div>
         
-        <CreateJobOfferForm 
-          initialData={offer}
-          isEditing={true}
-          offerId={id}
-        />
+        <CreateJobOfferForm initialData={offer} />
       </div>
     </div>
   )
