@@ -22,6 +22,7 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
   const [formData, setFormData] = useState({
     businessName: initialData?.businessName || "",
     city: initialData?.city || "",
+    zone: initialData?.zone || "",
     schedule: initialData?.schedule || "",
     days: initialData?.days || [],
     vehicleType: initialData?.vehicleType?.[0] || "qualsiasi",
@@ -81,6 +82,7 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
           setFormData({
             businessName: "",
             city: "",
+            zone: "",
             schedule: "",
             days: [],
             vehicleType: "qualsiasi",
@@ -126,12 +128,21 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
           </div>
 
           <div>
-            <label className="text-sm font-medium">Città / Zona *</label>
+            <label className="text-sm font-medium">Città *</label>
             <Input
               required
               value={formData.city}
               onChange={(e) => setFormData({ ...formData, city: e.target.value })}
               placeholder="es. Milano, Roma, Napoli"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Zona (opzionale)</label>
+            <Input
+              value={formData.zone}
+              onChange={(e) => setFormData({ ...formData, zone: e.target.value })}
+              placeholder="es. Centro, Navigli, San Siro"
             />
           </div>
 
