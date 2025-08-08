@@ -32,6 +32,7 @@ model Application {
   jobOfferId   String
   fullName     String
   email        String
+  phone        String
   vehicleType  String
   availability String
   cvLink       String?
