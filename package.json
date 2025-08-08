@@ -5,12 +5,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:seed": "node scripts/seed.js",
     "db:push": "prisma db push",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "db:migrate": "node scripts/migrate.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
