@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateTable
 CREATE TABLE "public"."job_offers" (
     "id" TEXT NOT NULL,
@@ -24,7 +27,6 @@ CREATE TABLE "public"."applications" (
     "jobOfferId" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "phone" TEXT NOT NULL,
     "vehicleType" TEXT NOT NULL,
     "availability" TEXT NOT NULL,
     "cvLink" TEXT,
@@ -36,3 +38,4 @@ CREATE TABLE "public"."applications" (
 
 -- AddForeignKey
 ALTER TABLE "public"."applications" ADD CONSTRAINT "applications_jobOfferId_fkey" FOREIGN KEY ("jobOfferId") REFERENCES "public"."job_offers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
