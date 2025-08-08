@@ -21,7 +21,7 @@ interface JobOffer {
   hourlyRate?: string
   details?: string
   contactEmail: string
-  contactPhone?: string
+
   createdAt: string
 }
 

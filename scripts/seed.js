@@ -18,7 +18,6 @@ async function main() {
         hourlyRate: '12',
         details: 'Cerchiamo rider per consegna pizze nel centro di Roma. Esperienza preferibile ma non necessaria.',
         contactEmail: 'lavora@pizzeriaroma.it',
-        contactPhone: '3331234567',
       }
     }),
     prisma.jobOffer.create({
@@ -32,7 +31,6 @@ async function main() {
         hourlyRate: '15',
         details: 'Consegna sushi in zona Navigli. Richiesto mezzo proprio e patente.',
         contactEmail: 'hr@sushiexpress.it',
-        contactPhone: '3498765432',
       }
     }),
     prisma.jobOffer.create({
@@ -46,7 +44,6 @@ async function main() {
         hourlyRate: '10',
         details: 'Consegna hamburger in centro città. Turni flessibili, possibilità di lavorare solo pranzo o solo cena.',
         contactEmail: 'torino@burgerking.it',
-        contactPhone: '0111234567',
       }
     }),
     prisma.jobOffer.create({
@@ -60,7 +57,6 @@ async function main() {
         hourlyRate: '11',
         details: 'Consegna gelati nel centro storico di Firenze. Lavoro weekend ideale per studenti.',
         contactEmail: 'info@gelateriadolcevita.it',
-        contactPhone: '0559876543',
       }
     }),
   ])

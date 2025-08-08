@@ -37,7 +37,7 @@ export default async function EditPage({ params }: EditPageProps) {
           </p>
         </div>
         
-        <CreateJobOfferForm initialData={offer} />
+        <CreateJobOfferForm initialData={offer} isEditing={true} offerId={id} />
       </div>
     </div>
   )

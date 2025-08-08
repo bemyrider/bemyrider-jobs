@@ -173,7 +173,7 @@ bemyrider-job-portal/
 - `hourlyRate`: Retribuzione oraria (opzionale)
 - `details`: Dettagli aggiuntivi
 - `contactEmail`: Email contatto
-- `contactPhone`: Telefono contatto (opzionale)
+
 - `isActive`: Stato attivo/inattivo
 - `createdByEmail`: Email dell'esercente
 - `createdAt`: Data creazione

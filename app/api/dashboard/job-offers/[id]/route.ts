@@ -45,7 +45,6 @@ export async function PUT(
         hourlyRate: body.hourlyRate,
         details: body.details,
         contactEmail: body.contactEmail,
-        contactPhone: body.contactPhone,
       },
     })
 

@@ -18,8 +18,7 @@ Punto di backup stabile dopo l'aggiunta del campo "zona" al form di creazione an
 - **API**: Le API sono già configurate per gestire il campo zona
 
 #### Gestione Campo ContactPhone
-- **Mantenuto**: Il campo `contactPhone` rimane nel database per compatibilità
-- **Non utilizzato**: Non viene mostrato nell'interfaccia utente come richiesto
+- **Rimosso**: Il campo `contactPhone` è stato completamente rimosso dal database e dall'interfaccia
 
 ### 🔧 Modifiche Tecniche
 
@@ -49,7 +48,7 @@ Punto di backup stabile dopo l'aggiunta del campo "zona" al form di creazione an
 - **Branch**: production (br-blue-sky-a29hoq7g)
 - **Tabelle**: job_offers, applications
 - **Campo zone**: Presente e funzionante
-- **Campo contactPhone**: Presente ma non utilizzato nell'interfaccia
+- **Campo contactPhone**: Completamente rimosso dal sistema
 
 ### 🚀 Prossimi Passi
 - Il campo zona è ora completamente funzionale

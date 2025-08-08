@@ -17,6 +17,8 @@ interface CreateJobOfferFormProps {
 }
 
 export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: CreateJobOfferFormProps) {
+  console.log('CreateJobOfferForm props:', { isEditing, offerId, hasInitialData: !!initialData })
+  
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const [formData, setFormData] = useState({
@@ -25,7 +27,7 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
     zone: initialData?.zone || "",
     schedule: initialData?.schedule || "",
     days: initialData?.days || [],
-    vehicleType: initialData?.vehicleType?.[0] || "qualsiasi",
+    vehicleType: Array.isArray(initialData?.vehicleType) ? initialData.vehicleType[0] : "qualsiasi",
     hourlyRate: initialData?.hourlyRate || "",
     details: initialData?.details || "",
     contactEmail: initialData?.contactEmail || ""
@@ -63,10 +65,20 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
       const url = isEditing ? `/api/dashboard/job-offers/${offerId}` : "/api/job-offers"
       const method = isEditing ? "PUT" : "POST"
       
+      console.log('Form submission debug:', {
+        isEditing,
+        offerId,
+        url,
+        method
+      })
+      
       const submitData = {
         ...formData,
-        days: selectedDays
+        days: selectedDays,
+        vehicleType: [formData.vehicleType] // Assicuriamoci che sia sempre un array
       }
+      
+      console.log('Submit data:', submitData)
       
       const response = await fetch(url, {
         method,
@@ -221,6 +233,8 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
               placeholder="es. nome@email.com"
             />
           </div>
+
+
 
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? (isEditing ? "Aggiornando..." : "Pubblicando...") : (isEditing ? "Aggiorna Annuncio" : "Pubblica Annuncio")}

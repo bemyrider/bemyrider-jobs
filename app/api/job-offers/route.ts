@@ -81,7 +81,6 @@ export async function POST(request: NextRequest) {
         hourlyRate: body.hourlyRate,
         details: body.details,
         contactEmail: body.contactEmail,
-        contactPhone: body.contactPhone,
         createdByEmail: session.user.email, // Salva l'email dell'utente autenticato
       }
     })
