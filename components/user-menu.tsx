@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "./ui/button"
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { User, LogOut, LayoutDashboard } from "lucide-react"
 import {
   DropdownMenu,
@@ -16,8 +16,8 @@ export function UserMenu() {
 
   if (!session) {
     return (
-      <Button onClick={() => signIn()} className="bg-bemyrider-blue hover:bg-bemyrider-blue/90 text-white">
-        Login
+      <Button asChild className="bg-bemyrider-blue hover:bg-bemyrider-blue/90 text-white">
+        <Link href="/signin">Login</Link>
       </Button>
     )
   }

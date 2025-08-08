@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation"
-import { getServerSession } from "next-auth"
+import { auth } from "@/lib/auth"
 import { CreateJobOfferForm } from "@/components/create-job-offer-form"
 
 export default async function PublishPage() {
-  const session = await getServerSession()
+  const session = await auth()
 
   if (!session?.user?.email) {
-    redirect("/api/auth/signin")
+    redirect("/signin")
   }
 
   return (

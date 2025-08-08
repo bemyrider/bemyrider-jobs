@@ -1,46 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { auth } from '../../../../../../lib/auth'
+import { prisma } from '../../../../../../lib/prisma'
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
+  const session = await auth()
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { id } = await params
-
-    // Verifica che l'annuncio appartenga all'utente
-    const existingOffer = await prisma.jobOffer.findFirst({
+    const offer = await prisma.jobOffer.findFirst({
       where: {
-        id,
+        id: params.id,
         createdByEmail: session.user.email,
       },
     })
 
-    if (!existingOffer) {
-      return NextResponse.json({ error: 'Annuncio non trovato' }, { status: 404 })
+    if (!offer) {
+      return NextResponse.json({ error: 'Offer not found' }, { status: 404 })
     }
 
-    // Toggle dello stato
     const updatedOffer = await prisma.jobOffer.update({
-      where: { id },
-      data: {
-        isActive: !existingOffer.isActive,
-      },
+      where: { id: params.id },
+      data: { isActive: !offer.isActive },
     })
 
     return NextResponse.json(updatedOffer)
   } catch (error) {
-    console.error('Error toggling job offer:', error)
-    return NextResponse.json(
-      { error: 'Failed to toggle job offer' },
-      { status: 500 }
-    )
+    console.error('Error toggling offer:', error)
+    return NextResponse.json({ error: 'Failed to toggle offer' }, { status: 500 })
   }
 } 

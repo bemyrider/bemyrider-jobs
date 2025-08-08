@@ -70,9 +70,9 @@ export function JobOffersList() {
   const buildQuery = useCallback((p: number) => {
     const params = new URLSearchParams()
     if (cityFilterDebounced) params.set('city', cityFilterDebounced)
-    if (vehicleFilter && vehicleFilter !== 'tutti') params.set('vehicle', vehicleFilter)
+    if (vehicleFilter && vehicleFilter !== 'tutti') params.set('vehicleType', vehicleFilter)
     params.set('page', String(p))
-    params.set('pageSize', String(pageSize))
+    params.set('limit', String(pageSize))
     return params.toString()
   }, [cityFilterDebounced, vehicleFilter, pageSize])
 
@@ -91,11 +91,17 @@ export function JobOffersList() {
 
       const newItems: JobOffer[] = Array.isArray(data)
         ? data // fallback legacy (array)
-        : Array.isArray(data?.items)
-          ? data.items
-          : []
+        : Array.isArray(data?.offers)
+          ? data.offers
+          : Array.isArray(data?.items)
+            ? data.items
+            : []
 
-      const newTotal = typeof data?.totalCount === 'number' ? data.totalCount : (Array.isArray(data) ? data.length : 0)
+      const newTotal = typeof data?.pagination?.totalCount === 'number' 
+        ? data.pagination.totalCount 
+        : typeof data?.totalCount === 'number' 
+          ? data.totalCount 
+          : (Array.isArray(data) ? data.length : 0)
 
       if (append) {
         setItems(prev => [...prev, ...newItems])

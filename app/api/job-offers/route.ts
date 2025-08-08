@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../../../lib/auth'
+import { auth } from '../../../lib/auth'
 import { prisma } from '../../../lib/prisma'
 import { Prisma } from '@prisma/client'
 
@@ -8,15 +7,12 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const city = searchParams.get('city')
-    // Per retrocompatibilità accettiamo sia "vehicle" che "vehicleType" come nome parametro
-    const vehicle = searchParams.get('vehicle') ?? searchParams.get('vehicleType')
-    const pageParam = parseInt(searchParams.get('page') || '1', 10)
-    const pageSizeParam = parseInt(searchParams.get('pageSize') || '10', 10)
+    const vehicleType = searchParams.get('vehicleType')
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const offset = (page - 1) * limit
 
-    const page = Number.isNaN(pageParam) || pageParam < 1 ? 1 : pageParam
-    const pageSize = Number.isNaN(pageSizeParam) || pageSizeParam < 1 ? 10 : Math.min(pageSizeParam, 50)
-    const skip = (page - 1) * pageSize
-
+    // Costruisci i filtri
     const where: Prisma.JobOfferWhereInput = {
       isActive: true,
     }
@@ -28,24 +24,35 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    if (vehicle) {
-      // vehicleType è un array in schema; supportiamo un solo valore alla volta
+    if (vehicleType && vehicleType !== 'tutti') {
       where.vehicleType = {
-        has: vehicle,
+        has: vehicleType,
       }
     }
 
-    const [items, totalCount] = await Promise.all([
+    // Esegui la query con paginazione
+    const [offers, totalCount] = await Promise.all([
       prisma.jobOffer.findMany({
         where,
         orderBy: { createdAt: 'desc' },
-        skip,
-        take: pageSize,
+        skip: offset,
+        take: limit,
       }),
       prisma.jobOffer.count({ where }),
     ])
 
-    return NextResponse.json({ items, totalCount, page, pageSize })
+    const totalPages = Math.ceil(totalCount / limit)
+
+    return NextResponse.json({
+      offers,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCount,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    })
   } catch (error) {
     console.error('Error fetching job offers:', error)
     return NextResponse.json(
@@ -57,36 +64,50 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()
-    
-    // Assicuriamoci che vehicleType sia un array
-    const vehicleType = Array.isArray(body.vehicleType) ? body.vehicleType : [body.vehicleType]
-    
-    // Gestiamo i giorni separatamente dagli orari
-    const days = Array.isArray(body.days) ? body.days : []
-    
-    const newJobOffer = await prisma.jobOffer.create({
+    const {
+      businessName,
+      city,
+      zone,
+      schedule,
+      days,
+      vehicleType,
+      hourlyRate,
+      details,
+      contactEmail,
+      contactPhone,
+    } = body
+
+    // Validazione dei campi obbligatori
+    if (!businessName || !city || !schedule || !days || !vehicleType) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    const offer = await prisma.jobOffer.create({
       data: {
-        businessName: body.businessName,
-        city: body.city,
-        zone: body.zone,
-        schedule: body.schedule, // Solo gli orari (es. "18:00-22:00")
-        days: days, // Solo i giorni (es. ["Lun", "Mar", "Mer", "Gio", "Ven"])
-        vehicleType: vehicleType,
-        hourlyRate: body.hourlyRate,
-        details: body.details,
-        contactEmail: body.contactEmail,
-        contactPhone: body.contactPhone,
-        createdByEmail: session.user.email, // Salva l'email dell'utente autenticato
-      }
+        businessName,
+        city,
+        zone,
+        schedule,
+        days,
+        vehicleType,
+        hourlyRate,
+        details,
+        contactEmail: contactEmail || session.user.email,
+        contactPhone,
+        createdByEmail: session.user.email,
+      },
     })
 
-    return NextResponse.json(newJobOffer, { status: 201 })
+    return NextResponse.json(offer, { status: 201 })
   } catch (error) {
     console.error('Error creating job offer:', error)
     return NextResponse.json(

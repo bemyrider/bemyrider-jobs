@@ -1,24 +1,24 @@
 import { redirect } from "next/navigation"
-import { getServerSession } from "next-auth"
+import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { CreateJobOfferForm } from "@/components/create-job-offer-form"
 
 interface EditPageProps {
-  params: Promise<{ id: string }>
+  params: {
+    id: string
+  }
 }
 
 export default async function EditPage({ params }: EditPageProps) {
-  const session = await getServerSession()
+  const session = await auth()
 
   if (!session?.user?.email) {
-    redirect("/api/auth/signin")
+    redirect("/signin")
   }
 
-  const { id } = await params
-  
   const offer = await prisma.jobOffer.findUnique({
     where: {
-      id,
+      id: params.id,
       createdByEmail: session.user.email,
     },
   })
