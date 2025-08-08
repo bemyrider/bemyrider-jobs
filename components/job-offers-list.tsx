@@ -197,11 +197,11 @@ export function JobOffersList() {
     <div className="container mx-auto py-8 space-y-8">
 
       {/* Header con ricerca e filtri */}
-      <div className="flex flex-col space-y-4">
+      <div className="flex flex-col space-y-4 home-title">
         <h1 className="text-4xl font-bold tracking-tight text-bemyrider-blue">Trova il tuo prossimo ingaggio</h1>
         <p className="text-muted-foreground">Esplora le opportunità di ingaggio disponibili nella tua zona</p>
         
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 search-filters">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -332,7 +332,7 @@ export function JobOffersList() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 job-offers-grid">
             {items.map((offer) => (
               <Card key={offer.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>

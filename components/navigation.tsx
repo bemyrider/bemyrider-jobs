@@ -43,7 +43,9 @@ export function Navigation() {
             </Link>
           </div>
           
-          <UserMenu />
+          <div className="user-menu">
+            <UserMenu />
+          </div>
         </div>
       </div>
     </nav>

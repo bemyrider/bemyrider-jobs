@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { getServerSession } from "next-auth"
 import { CreateJobOfferForm } from "@/components/create-job-offer-form"
+import { HelpButton } from "@/components/help-button"
 
 export default async function PublishPage() {
   const session = await getServerSession()
@@ -21,6 +22,7 @@ export default async function PublishPage() {
         
         <CreateJobOfferForm />
       </div>
+      <HelpButton tourType="publish" />
     </div>
   )
 }

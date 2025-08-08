@@ -1,6 +1,7 @@
 "use client"
 
 import { JobOffersList } from "@/components/job-offers-list"
+import { HelpButton } from "@/components/help-button"
 
 export default function HomePage() {
   return (
@@ -8,6 +9,7 @@ export default function HomePage() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <JobOffersList />
       </div>
+      <HelpButton tourType="home" />
     </div>
   )
 }

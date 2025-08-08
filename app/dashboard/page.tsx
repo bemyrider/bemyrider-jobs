@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { JobOfferActions } from "@/components/job-offer-actions"
+import { HelpButton } from "@/components/help-button"
 import { prisma } from "@/lib/prisma"
 import { JobOffer, Application } from "@prisma/client"
 
@@ -48,7 +49,7 @@ export default async function DashboardPage() {
   return (
     <div className="bg-background pt-16">
       {/* Pulsante fisso per pubblicare annuncio */}
-      <div className="fixed top-20 right-4 z-40">
+      <div className="fixed top-20 right-4 z-40 publish-button">
         <Button asChild className="shadow-lg">
           <a href="/publish">Pubblica Annuncio</a>
         </Button>
@@ -56,7 +57,7 @@ export default async function DashboardPage() {
       
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Sezione di benvenuto */}
-        <div className="mb-8">
+        <div className="mb-8 dashboard-welcome">
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Benvenuto nella tua Dashboard
           </h1>
@@ -81,7 +82,7 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-4 md:space-y-6 job-offers-list">
             {offers.map((offer) => (
               <Card key={offer.id}>
                 <CardHeader>
@@ -158,6 +159,7 @@ export default async function DashboardPage() {
           </div>
         )}
       </div>
+      <HelpButton tourType="dashboard" />
     </div>
   )
 }

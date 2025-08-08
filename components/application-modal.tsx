@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { X } from "lucide-react"
+import { useTooltip } from "./tooltip-provider"
 
 interface JobOffer {
   id: string
@@ -21,6 +22,7 @@ interface ApplicationModalProps {
 
 export function ApplicationModal({ jobOffer, isOpen, onClose }: ApplicationModalProps) {
   const [loading, setLoading] = useState(false)
+  const { startApplicationTour } = useTooltip()
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -30,6 +32,21 @@ export function ApplicationModal({ jobOffer, isOpen, onClose }: ApplicationModal
     cvLink: "",
     presentation: ""
   })
+
+  // Avvia il tour quando il modal si apre per la prima volta
+  useEffect(() => {
+    if (isOpen) {
+      const hasSeenApplicationTour = localStorage.getItem('bemyrider-welcome-application')
+      if (!hasSeenApplicationTour) {
+        // Delay per permettere al modal di renderizzare completamente
+        const timer = setTimeout(() => {
+          startApplicationTour()
+          localStorage.setItem('bemyrider-welcome-application', 'true')
+        }, 500)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [isOpen, startApplicationTour])
 
   if (!isOpen) return null
 
@@ -73,7 +90,7 @@ export function ApplicationModal({ jobOffer, isOpen, onClose }: ApplicationModal
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto application-modal">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Candidati per {jobOffer.businessName}</h2>
@@ -86,7 +103,7 @@ export function ApplicationModal({ jobOffer, isOpen, onClose }: ApplicationModal
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            <div className="contact-fields">
               <label className="text-sm font-medium">Nome e Cognome *</label>
               <Input
                 required
@@ -96,7 +113,7 @@ export function ApplicationModal({ jobOffer, isOpen, onClose }: ApplicationModal
               />
             </div>
 
-            <div>
+            <div className="contact-fields">
               <label className="text-sm font-medium">Email *</label>
               <Input
                 required
@@ -107,7 +124,7 @@ export function ApplicationModal({ jobOffer, isOpen, onClose }: ApplicationModal
               />
             </div>
 
-            <div>
+            <div className="contact-fields">
               <label className="text-sm font-medium">Telefono *</label>
               <Input
                 required
@@ -157,7 +174,7 @@ export function ApplicationModal({ jobOffer, isOpen, onClose }: ApplicationModal
               />
             </div>
 
-            <div>
+            <div className="presentation-field">
               <label className="text-sm font-medium">Breve Presentazione *</label>
               <Textarea
                 required

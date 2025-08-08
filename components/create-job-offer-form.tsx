@@ -128,8 +128,8 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        <form onSubmit={handleSubmit} className="space-y-4 publish-form">
+          <div className="business-name-input">
             <label className="text-sm font-medium">Nome Attività *</label>
             <Input
               required
@@ -139,7 +139,7 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
             />
           </div>
 
-          <div>
+          <div className="city-zone-inputs">
             <label className="text-sm font-medium">Città *</label>
             <Input
               required
@@ -149,7 +149,7 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
             />
           </div>
 
-          <div>
+          <div className="city-zone-inputs">
             <label className="text-sm font-medium">Zona (opzionale)</label>
             <Input
               value={formData.zone}
@@ -185,7 +185,7 @@ export function CreateJobOfferForm({ initialData, isEditing = false, offerId }: 
             </div>
           </div>
 
-          <div>
+          <div className="vehicle-type-input">
             <label className="text-sm font-medium">Tipo di Mezzo Preferito</label>
             <Select
               value={formData.vehicleType}
