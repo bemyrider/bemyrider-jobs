@@ -1,7 +1,8 @@
-"use client"
-
 import { JobOffersList } from "@/components/job-offers-list"
 import { HelpButton } from "@/components/help-button"
+
+// Force dynamic rendering per contenuto che cambia frequentemente
+export const dynamic = 'force-dynamic'
 
 export default function HomePage() {
   return (

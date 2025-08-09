@@ -4,6 +4,7 @@ import "./globals.css"
 import { Navigation } from "../components/navigation"
 import { Footer } from "../components/footer"
 import { Providers } from "../components/providers"
+import { NotificationToastContainer } from "../components/notification-toast"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({ 
@@ -31,6 +32,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <NotificationToastContainer />
         </Providers>
         <SpeedInsights />
       </body>

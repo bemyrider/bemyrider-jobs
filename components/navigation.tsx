@@ -1,12 +1,15 @@
 "use client"
 
 import { UserMenu } from "./user-menu"
+import { NotificationBell } from "./notification-bell"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const { data: session } = useSession()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,8 +46,11 @@ export function Navigation() {
             </Link>
           </div>
           
-          <div className="user-menu">
-            <UserMenu />
+          <div className="flex items-center space-x-4">
+            {session && <NotificationBell />}
+            <div className="user-menu">
+              <UserMenu />
+            </div>
           </div>
         </div>
       </div>

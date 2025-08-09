@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const vehicle = searchParams.get('vehicle') ?? searchParams.get('vehicleType')
     const pageParam = parseInt(searchParams.get('page') || '1', 10)
     const pageSizeParam = parseInt(searchParams.get('pageSize') || '10', 10)
+    const since = searchParams.get('since') // Per notifiche
 
     const page = Number.isNaN(pageParam) || pageParam < 1 ? 1 : pageParam
     const pageSize = Number.isNaN(pageSizeParam) || pageSizeParam < 1 ? 10 : Math.min(pageSizeParam, 50)
@@ -35,12 +36,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Filtro per data (per notifiche)
+    if (since) {
+      where.createdAt = {
+        gte: new Date(since)
+      }
+    }
+
     const [items, totalCount] = await Promise.all([
       prisma.jobOffer.findMany({
         where,
         orderBy: { createdAt: 'desc' },
-        skip,
-        take: pageSize,
+        skip: since ? 0 : skip, // Non paginare se stiamo controllando per notifiche
+        take: since ? undefined : pageSize, // Prendi tutti se stiamo controllando per notifiche
       }),
       prisma.jobOffer.count({ where }),
     ])

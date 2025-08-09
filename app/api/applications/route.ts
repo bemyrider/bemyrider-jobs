@@ -59,8 +59,16 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const jobOfferId = searchParams.get('jobOfferId')
+    const since = searchParams.get('since') // Per notifiche
 
-    const where = jobOfferId ? { jobOfferId } : {}
+    const where: { jobOfferId?: string; createdAt?: { gte: Date } } = jobOfferId ? { jobOfferId } : {}
+
+    // Filtro per data (per notifiche)
+    if (since) {
+      where.createdAt = {
+        gte: new Date(since)
+      }
+    }
 
     const applications = await prisma.application.findMany({
       where,
