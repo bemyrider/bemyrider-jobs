@@ -206,11 +206,23 @@ export function TooltipProvider({ children }: TooltipProviderProps) {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop
         const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
         
-        // Posiziona il tooltip sopra l'elemento target
-        setTooltipPosition({
-          top: rect.top + scrollTop - 10,
-          left: rect.left + scrollLeft + rect.width / 2
-        })
+        // Calcola la posizione ottimale del tooltip
+        const tooltipHeight = 200 // altezza stimata del tooltip
+        const spaceAbove = rect.top
+        const spaceBelow = window.innerHeight - rect.bottom
+        
+        // Se c'è più spazio sotto, posiziona sotto l'elemento
+        const top = (spaceBelow > tooltipHeight || spaceAbove < tooltipHeight) 
+          ? rect.bottom + scrollTop + 20 // Sotto l'elemento
+          : rect.top + scrollTop - tooltipHeight - 20 // Sopra l'elemento
+        
+        // Centra orizzontalmente ma mantieni nei limiti dello schermo
+        const left = Math.max(20, Math.min(
+          window.innerWidth - 380, // larghezza tooltip + margine
+          rect.left + scrollLeft + rect.width / 2 - 175 // centrato
+        ))
+        
+        setTooltipPosition({ top, left })
         
         // Scroll smooth all'elemento
         targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -279,17 +291,12 @@ export function TooltipProvider({ children }: TooltipProviderProps) {
           {/* Tooltip */}
           <div
             ref={tooltipRef}
-            className="fixed z-50 bg-white rounded-lg shadow-xl p-4 max-w-sm transform -translate-x-1/2 -translate-y-full"
+            className="fixed z-50 bg-white rounded-lg shadow-xl p-4 w-80"
             style={{
               top: tooltipPosition.top,
               left: tooltipPosition.left,
             }}
           >
-            {/* Freccia */}
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2">
-              <div className="w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-white"></div>
-            </div>
-            
             {/* Contenuto */}
             <div className="mb-4">
               {activeSteps[currentStep].content}
